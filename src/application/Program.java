@@ -110,6 +110,17 @@ public class Program {
             DB.closeStatement(ps);
             DB.closeConnection();
         }
+
+        /*
+        To delete from database just replace the update/insert statement for a delete statement (using conn.prepareStatement)
+
+        Example:
+        ps = conn.prepareStatement(
+                    "DELETE FROM YOUR_TABLE "
+                    + "SET COLUMN2 = ? "
+                    + "WHERE "
+                    + "(COLUMN1 = ?)");
+         */
     }
 
 }
