@@ -15,7 +15,7 @@ public class Program {
 
         Connection conn = null;
 
-        //execute a query
+        //Example 1: execute a query
         Statement st = null;
         ResultSet rs = null;
 
@@ -39,7 +39,7 @@ public class Program {
             DB.closeConnection();
         }
 
-        //execute an insert
+        //Example 2: execute an insert
         PreparedStatement ps = null;
 
         try {
@@ -50,7 +50,7 @@ public class Program {
                     + "(COLUMN1, COLUMN2, COLUMN3) "
                     + "VALUES "
                     + "(?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS); //return the primary key generated after the insert
+                    Statement.RETURN_GENERATED_KEYS); //return the primary key generated after the insert (optional)
 
             /*
             insert more than one value for the same column at once
@@ -64,6 +64,7 @@ public class Program {
 
             int rowsAffected = ps.executeUpdate();
 
+            //optional treatment
             if (rowsAffected > 0) {
                 ResultSet rst = ps.getGeneratedKeys();
                 while (rst.next()) {
@@ -86,6 +87,29 @@ public class Program {
             DB.closeConnection();
         }
 
+        //Example 3: execute an update
+        try {
+            conn = DB.getConnection();
+
+            ps = conn.prepareStatement(
+                    "UPDATE YOUR_TABLE "
+                            + "SET COLUMN2 = ? "
+                            + "WHERE "
+                            + "(COLUMN1 = ?)");
+
+            ps.setDouble(1,1000.00); //supposing column2 is double
+            ps.setInt(2,123); //supposing column1 is an integer (may be an id)
+
+            ps.executeUpdate();
+
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            DB.closeStatement(ps);
+            DB.closeConnection();
+        }
     }
 
 }
