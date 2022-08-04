@@ -1,6 +1,7 @@
 package application;
 
 import db.DB;
+import db.DbException;
 
 import java.sql.*;
 import java.text.ParseException;
@@ -31,7 +32,7 @@ public class Program {
             }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DbException(e.getMessage());
         }
         finally {
             DB.closeResultSet(rs);
@@ -77,7 +78,7 @@ public class Program {
             }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DbException(e.getMessage());
         }
         catch (ParseException e) {
             e.printStackTrace();
@@ -104,7 +105,7 @@ public class Program {
 
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DbException(e.getMessage());
         }
         finally {
             DB.closeStatement(ps);
