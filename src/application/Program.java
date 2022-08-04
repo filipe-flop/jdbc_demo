@@ -46,6 +46,8 @@ public class Program {
         try {
             conn = DB.getConnection();
 
+            conn.setAutoCommit(false);
+
             ps = conn.prepareStatement(
                     "INSERT INTO YOUR_TABLE "
                     + "(COLUMN1, COLUMN2, COLUMN3) "
@@ -64,6 +66,7 @@ public class Program {
             ps.setDate(3,new java.sql.Date(sdf.parse("01/31/2022").getTime())); //supposing column3 is a date type
 
             int rowsAffected = ps.executeUpdate();
+            conn.commit();
 
             //optional treatment
             if (rowsAffected > 0) {
@@ -78,7 +81,12 @@ public class Program {
             }
         }
         catch (SQLException e) {
-            throw new DbException(e.getMessage());
+            try {
+                conn.rollback();
+                throw new DbException("Transaction rolled back. Caused by: " + e.getMessage());
+            } catch (SQLException ex) {
+                throw new DbException("Error trying to rollback. Caused by: " + ex.getMessage());
+            }
         }
         catch (ParseException e) {
             e.printStackTrace();
@@ -91,6 +99,7 @@ public class Program {
         //Example 3: execute an update
         try {
             conn = DB.getConnection();
+            conn.setAutoCommit(false);
 
             ps = conn.prepareStatement(
                     "UPDATE YOUR_TABLE "
@@ -102,10 +111,16 @@ public class Program {
             ps.setInt(2,123); //supposing column1 is an integer (may be an id)
 
             ps.executeUpdate();
+            conn.commit();
 
         }
         catch (SQLException e) {
-            throw new DbException(e.getMessage());
+            try {
+                conn.rollback();
+                throw new DbException("Transaction rolled back. Caused by: " + e.getMessage());
+            } catch (SQLException ex) {
+                throw new DbException("Error trying to rollback. Caused by: " + ex.getMessage());
+            }
         }
         finally {
             DB.closeStatement(ps);
